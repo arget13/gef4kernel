@@ -42,13 +42,20 @@ class PageWalk(GenericCommand):
         itswritable   = True
         itsexecutable = True
 
-        if Address(value = 0xffff888000000000).dereference():
-            cls.page_offset = 0xffff888000000000
-        elif Address(value = 0xffff880000000000).dereference():
-            cls.page_offset = 0xffff880000000000
-        else:
-            print("Error, couldn't determine PAGE_OFFSET")
+        if (len(argv) < 1):
+            print("Usage: pagewalk <addr> [page_offset]")
             return False
+
+        if (len(argv) < 2):
+            if Address(value = 0xffff888000000000).dereference():
+                cls.page_offset = 0xffff888000000000
+            elif Address(value = 0xffff880000000000).dereference():
+                cls.page_offset = 0xffff880000000000
+            else:
+                print("Error, couldn't determine PAGE_OFFSET")
+                return False
+        else:
+            cls.page_offset = parse_address(argv[1])
 
         addr  = parse_address(argv[0])
         print("Virt addr: " + Color.blueify("0x%016x" % addr))
@@ -140,3 +147,4 @@ class PageWalk(GenericCommand):
         print(")")
         print(details)
         return True
+        
